@@ -5,8 +5,12 @@ using namespace std;
 Data::Data() {
     attackMode = -1;
     hashType = -1;
-    wordIndex = -1;
+    dictIndex = 0;
     testIndex = 0;
+}
+
+Data::~Data() {
+    pthread_mutex_destroy(&lock);
 }
 
 void Data::setAttackMode(int a) { attackMode = a; }
@@ -27,45 +31,53 @@ bool Data::containsHash(string hash) {
 }
 int Data::getHashSize() { return hashes.size(); }
 
-void Data::addWord(string word) { wordlist.push_front(word); }
+void Data::addWord(string word) { dictionary.push_back(word); }
 void Data::addWords(list<string> words) {
     for(auto const& w: words)
-        wordlist.push_front(w);
+        dictionary.push_back(w);
 }
 string Data::getWord(int i) { 
-    std::list<std::string>::iterator it = wordlist.begin();
-    std::advance(it, i);
-    return *it;
+    string word = dictionary[i];
+    return word;
 }
-list<string> Data::getWordList() { return wordlist; }
-int Data::getWordSize() { return wordlist.size(); }
+vector<string> Data::getWordList() { return dictionary; }
+int Data::getWordSize() { return dictionary.size(); }
 
-void Data::addCrack(string crack) { cracked.push_front(crack); }
+void Data::addCrack(string crack) { 
+    pthread_mutex_lock(&lock);
+    cracked.push_back(crack); 
+    cout << crack << endl;
+    pthread_mutex_unlock(&lock);
+}
 void Data::addCracks(list<string> cracks) {
+    pthread_mutex_lock(&lock);
     for(auto const& c: cracks)
-        cracked.push_front(c);
+        cracked.push_back(c);
+    pthread_mutex_unlock(&lock);
 }
 string Data::getCrack(int i) {
-    std::list<std::string>::iterator it = cracked.begin();
-    std::advance(it, i);
+    std::list<string>::iterator it = cracked.begin();
+    std::advance(it,i);
     return *it;
 }
 list<string> Data::getCracked() { return cracked; }
 int Data::getCrackSize() { return cracked.size(); }
 
-int Data::getWordIndex() { return wordIndex; }
+int Data::getDictIndex() { return dictIndex; }
 int Data::getTestIndex() { return testIndex; }
 
 string Data::nextWord() {
-    wordIndex++;
-    std::list<std::string>::iterator it = wordlist.begin();
-    std::advance(it, wordIndex);
-    return *it;
+    pthread_mutex_lock(&lock);
+    string word = dictionary[dictIndex];
+    dictIndex++;
+    pthread_mutex_unlock(&lock); 
+    return word;
 }
 
-bool Data::isNextWord() { return (getWordIndex() <= getWordSize()-2); }
+bool Data::isNextWord() { return (getDictIndex() < getWordSize()); }
 
 string Data::nextTest() {
+    pthread_mutex_lock(&lock);
     if(test[testIndex] == 0) {
         test[testIndex] = 47;
     }
@@ -86,8 +98,9 @@ string Data::nextTest() {
         if(test[i] != 0)
             testString += test[i];
     }
+    pthread_mutex_unlock(&lock);
     return testString;
 }
 
-bool Data::isNextTest() { return getTestIndex() < (sizeof(test)/sizeof(char)); }
+bool Data::isNextTest() { return getTestIndex() < (sizeof(test)/sizeof(int)); }
 

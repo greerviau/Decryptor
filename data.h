@@ -2,11 +2,14 @@
 
 #include <iostream>
 #include <cstdlib>
-#include <list> 
+#include <list>
+#include <vector> 
 #include <set>
 #include <iterator>
 #include <sstream>
 #include <string>
+#define HAVE_STRUCT_TIMESPEC
+#include <pthread.h>
 
 #ifndef DATA_H
 #define DATA_H
@@ -15,6 +18,7 @@ namespace std {
     class Data {
         public:
             Data();
+            ~Data();
             void setAttackMode(int a);
             int getAttackMode();
 
@@ -29,7 +33,7 @@ namespace std {
             void addWord(string word);
             void addWords(list<string> words);
             string getWord(int i);
-            list<string> getWordList();
+            vector<string> getWordList();
             int getWordSize();
 
             void addCrack(string crack);
@@ -38,7 +42,7 @@ namespace std {
             list<string> getCracked();
             int getCrackSize();
 
-            int getWordIndex();
+            int getDictIndex();
             int getTestIndex();
 
             string nextWord();
@@ -53,12 +57,14 @@ namespace std {
         private:
             int attackMode;
             int hashType;
-            int wordIndex;
+            int dictIndex;
             int testIndex;
             int test[8] = {0,0,0,0,0,0,0,0};
 
+            pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+
             set<string> hashes;
-            list<string> wordlist;
+            vector<string> dictionary;
             list<string> cracked;
     };
 }

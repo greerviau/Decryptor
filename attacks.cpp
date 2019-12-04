@@ -9,7 +9,7 @@ Attacks::Attacks(Data* data) {
 void Attacks::run() {
     switch(dataP->getAttackMode()) {
         case 0:
-            wordListAttack();
+            dictionaryAttack();
             break;
         case 1:
             bruteForce();
@@ -20,18 +20,20 @@ void Attacks::run() {
     }
 }
 
-void Attacks::wordListAttack() {
+void Attacks::dictionaryAttack() {
     try {
         while(dataP->isNextWord()) {
             string word = dataP->nextWord();
             string hashcheck = getHash(word);
             if(dataP->containsHash(hashcheck)) {
+                //cracked.push_back(hashcheck+":"+word);
+                //cout << hashcheck+":"+word << endl;
                 dataP->addCrack(hashcheck+":"+word);
-                cout << hashcheck << ":" << word << endl;
             }
         }
+        //dataP->addCracks(cracked);
     } catch (exception& e) {
-        cout << "Exception in wordListAttack()" << endl;
+        cout << "Exception in dictionaryAttack()" << endl;
     }
 }
 
@@ -41,10 +43,12 @@ void Attacks::bruteForce() {
             string testS = dataP->nextTest();
             string hashcheck = getHash(testS);
             if(dataP->containsHash(hashcheck)) {
+                //cracked.push_back(hashcheck+":"+testS);
+                //cout << hashcheck+":"+testS << endl;
                 dataP->addCrack(hashcheck+":"+testS);
-                cout << hashcheck << ":" << testS << endl;
             }
         }
+        //dataP->addCracks(cracked);
     } catch (exception& e) {
         cout << "Exception in bruteForce()" << endl;
     }
@@ -69,5 +73,6 @@ string Attacks::getHash(string word) {
         cout << "Exception in getHash()" << endl;
         return NULL;
     }
+    return NULL;
 }
 

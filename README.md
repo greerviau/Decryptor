@@ -1,2 +1,2 @@
 # Decryptor
-Cryptographic Hash Cracking
+Cryptographic Hash Decryption
