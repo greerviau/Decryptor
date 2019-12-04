@@ -16,7 +16,7 @@ void Attacks::run() {
             break;
         default:
             cout << "--< Invalid Attack Mode >--" << endl;
-            system("exit");
+            exit(1);
     }
 }
 
@@ -67,7 +67,7 @@ string Attacks::getHash(string word) {
                 return sha3(word);
             default:
                 cout << "--< Invalid Hashing Algorithm >--" << endl;
-                system("exit");
+                exit(1);
         }
     } catch (exception& e) {
         cout << "Exception in getHash()" << endl;

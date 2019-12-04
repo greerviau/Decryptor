@@ -83,7 +83,7 @@ void displayData() {
         cout << "> Cracked..............: " << data.getCrackSize() << "/" << data.getHashSize() << endl;
     } catch (exception& e) {
         cout << "--< Invalid Hash Algorithm >--" <<endl;
-        system("exit");
+        exit(1);
     }
 }
 
@@ -117,7 +117,7 @@ void writeFile(string file, list<E> outList) {
     
     outFile.open(file);
     if (!outFile) {
-        cout << "Unable to open file";
+        cout << "Unable to open file [ " << file << " ]";
         exit(1); // terminate with error
     }
 
@@ -198,7 +198,7 @@ void cla(int argc, char** argv) {
                 break;
             case helpC:
                 helpMenu();
-                break;
+                exit(1);
             default:
                 break;
         }
@@ -218,28 +218,28 @@ int main(int argc, char** argv) {
 
     if(data.getHashType() == -1) {
         cout << "--< Hash Type Not Specified >--" << endl;
-        system("exit");
+        exit(1);
     } else if(data.getHashType() > 3) {
         cout << "--< Invalid Hash Type >--" << endl;
-        system("exit");
+        exit(1);
     } else if(data.getAttackMode() == -1) {
         cout << "--< Attack Mode Not Specified >--" << endl;
-        system("exit");
+        exit(1);
     } else if(data.getAttackMode() > 1) {
         cout << "--< Invalid Attack Mode >--" << endl;
-        system("exit");
+        exit(1);
     } else if(hashFile == "") {
         cout << "--< Hash File Required >--" << endl;
-        system("exit");
+        exit(1);
     } else if(data.getAttackMode() == 0 && dictFile == "") {
         cout << "--< Dictionary Required for Dictionary Attack >--" << endl;
-        system("exit");
+        exit(1);
     } else if(threads > MAX_THREADS) {
         cout << "--< Number of Threads Exceeds MAX THREADS >--" << endl;
-        system("exit");
+        exit(1);
     } else if(threads < 0) {
         cout << "--< Must Use At Least 1 Thread >--" << endl;
-        system("exit");
+        exit(1);
     }
 
     cout << "\n\n> Loading Hash File..." << endl;
