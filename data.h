@@ -33,8 +33,8 @@ namespace std {
             void addWord(string word);
             void addWords(list<string> words);
             string getWord(int i);
-            vector<string> getWordList();
-            int getWordSize();
+            vector<string> getDictionary();
+            int getDictSize();
 
             void addCrack(string crack);
             void addCracks(list<string> cracks);
@@ -55,10 +55,10 @@ namespace std {
 
 
         private:
-            int attackMode;
-            int hashType;
-            int dictIndex;
-            int testIndex;
+            int attack_mode;
+            int hash_type;
+            int dict_index;
+            int test_index;
             int test[8] = {0,0,0,0,0,0,0,0};
 
             pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;

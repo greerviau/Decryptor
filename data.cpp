@@ -3,21 +3,21 @@
 using namespace std;
 
 Data::Data() {
-    attackMode = -1;
-    hashType = -1;
-    dictIndex = 0;
-    testIndex = 0;
+    attack_mode = -1;
+    hash_type = -1;
+    dict_index = 0;
+    test_index = 0;
 }
 
 Data::~Data() {
     pthread_mutex_destroy(&lock);
 }
 
-void Data::setAttackMode(int a) { attackMode = a; }
-int Data::getAttackMode() { return attackMode; }
+void Data::setAttackMode(int a) { attack_mode = a; }
+int Data::getAttackMode() { return attack_mode; }
 
-void Data::setHashType(int h) { hashType = h; }
-int Data::getHashType() { return hashType; }
+void Data::setHashType(int h) { hash_type = h; }
+int Data::getHashType() { return hash_type; }
 
 void Data::addHash(string hash) { hashes.insert(hash); }
 void Data::addHashes(list<string> hash) {
@@ -40,8 +40,8 @@ string Data::getWord(int i) {
     string word = dictionary[i];
     return word;
 }
-vector<string> Data::getWordList() { return dictionary; }
-int Data::getWordSize() { return dictionary.size(); }
+vector<string> Data::getDictionary() { return dictionary; }
+int Data::getDictSize() { return dictionary.size(); }
 
 void Data::addCrack(string crack) { 
     pthread_mutex_lock(&lock);
@@ -63,34 +63,34 @@ string Data::getCrack(int i) {
 list<string> Data::getCracked() { return cracked; }
 int Data::getCrackSize() { return cracked.size(); }
 
-int Data::getDictIndex() { return dictIndex; }
-int Data::getTestIndex() { return testIndex; }
+int Data::getDictIndex() { return dict_index; }
+int Data::getTestIndex() { return test_index; }
 
 string Data::nextWord() {
     pthread_mutex_lock(&lock);
-    string word = dictionary[dictIndex];
-    dictIndex++;
+    string word = dictionary[dict_index];
+    dict_index++;
     pthread_mutex_unlock(&lock); 
     return word;
 }
 
-bool Data::isNextWord() { return (getDictIndex() < getWordSize()); }
+bool Data::isNextWord() { return (getDictIndex() < getDictSize()); }
 
 string Data::nextTest() {
     pthread_mutex_lock(&lock);
-    if(test[testIndex] == 0) {
-        test[testIndex] = 47;
+    if(test[test_index] == 0) {
+        test[test_index] = 47;
     }
-    test[testIndex]++;
-    if(test[testIndex] == 58)
-        test[testIndex] = 65;
-    else if(test[testIndex] == 91)
-        test[testIndex] = 97;
-    testIndex = 0;
-    while(test[testIndex] > 122) {
-        test[testIndex] = 48;
-        testIndex++;
-        if(testIndex >= (sizeof(test)/sizeof(int)))
+    test[test_index]++;
+    if(test[test_index] == 58)
+        test[test_index] = 65;
+    else if(test[test_index] == 91)
+        test[test_index] = 97;
+    test_index = 0;
+    while(test[test_index] > 122) {
+        test[test_index] = 48;
+        test_index++;
+        if(test_index >= (sizeof(test)/sizeof(int)))
             break;
     }
     string testString = "";

@@ -23,9 +23,9 @@ const int MAX_THREADS = 8;
 
 auto start_time = chrono::system_clock::now();
 
-string hashFile = "";
-string dictFile = "";
-string outFile = "";
+string hash_file_path = "";
+string dict_file_path = "";
+string out_file_path = "";
 int threads = MAX_THREADS;
 Data data;
 
@@ -68,12 +68,12 @@ void displayData() {
         string hashTypes[4] = {"MD5", "SHA1", "SHA256", "SHA3"};
         cout << "> Attack-Mode..........: " << attacks[data.getAttackMode()] << endl;
         cout << "> Hash-Type............: " << hashTypes[data.getHashType()] << endl;
-        cout << "> Hash-File............: " << hashFile << endl;
-        if(outFile != "")
-            cout << "> OutFile..............: " << outFile << endl;
+        cout << "> Hash-File............: " << hash_file_path << endl;
+        if(out_file_path != "")
+            cout << "> OutFile..............: " << out_file_path << endl;
         if(data.getAttackMode() == 0) {
-            cout << "> Dictionary...........: " << dictFile << endl;
-            cout << "> Dictionary-Size......: " << data.getWordSize() << endl;
+            cout << "> Dictionary...........: " << dict_file_path << endl;
+            cout << "> Dictionary-Size......: " << data.getDictSize() << endl;
         } else
             cout << "> Mask.................: [A-Z][a-z][0-9]" << endl;
         cout << "> Threads..............: " << threads << endl;
@@ -93,14 +93,14 @@ void showList(std::list <E> const &list) {
         std::cout<<i<<endl;
 } 
 
-list<string> readFile(string file) {
+list<string> readFile(string path) {
     string x;
     ifstream inFile;
     list<string> inList;
     
-    inFile.open(file);
+    inFile.open(path);
     if (!inFile) {
-        cout << "Unable to open file [ " << file << " ]";
+        cout << "Unable to open file [ " << path << " ]";
         exit(1); // terminate with error
     }
 
@@ -112,19 +112,19 @@ list<string> readFile(string file) {
 }
 
 template<class E>
-void writeFile(string file, list<E> outList) {
-    ofstream outFile;
+void writeFile(string path, list<E> outList) {
+    ofstream out_file_path;
     
-    outFile.open(file);
-    if (!outFile) {
-        cout << "Unable to open file [ " << file << " ]";
+    out_file_path.open(path);
+    if (!out_file_path) {
+        cout << "Unable to open file [ " << path << " ]";
         exit(1); // terminate with error
     }
 
     for(auto const& line: outList)
-        outFile << line << endl;
+        out_file_path << line << endl;
     
-    outFile.close();
+    out_file_path.close();
 }
 
 void cli() {
@@ -134,7 +134,7 @@ void cli() {
     if(hsht != "")
         data.setHashType(std::stoi(hsht));
     cout << "Path to Hash File: ";
-    getline(cin, hashFile);
+    getline(cin, hash_file_path);
     cout << endl << "Attack Mode\n0 = Dictionary\n1 = BruteForce\nEnter Attack Mode: ";
     string atm;
     getline(cin, atm);
@@ -142,10 +142,10 @@ void cli() {
         data.setAttackMode(std::stoi(atm));
     if(data.getAttackMode() == 0) {
         cout << "Path to Dictionary: ";
-        getline(cin,dictFile);
+        getline(cin,dict_file_path);
     }
     cout << "Path to OutFile (blank for no file): ";
-    getline(cin,outFile);
+    getline(cin,out_file_path);
     cout << "Number of Threads (blank for max): ";
     string t;
     getline(cin,t);
@@ -185,13 +185,13 @@ void cla(int argc, char** argv) {
                 data.setAttackMode(std::stoi(param));
                 break;
             case hashC:
-                hashFile = param;
+                hash_file_path = param;
                 break;
             case wordC:
-                dictFile = param;
+                dict_file_path = param;
                 break;
             case outC:
-                outFile = param;
+                out_file_path = param;
                 break;
             case threadC:
                 threads = std::stoi(param);
@@ -228,10 +228,10 @@ int main(int argc, char** argv) {
     } else if(data.getAttackMode() > 1) {
         cout << "--< Invalid Attack Mode >--" << endl;
         exit(1);
-    } else if(hashFile == "") {
+    } else if(hash_file_path == "") {
         cout << "--< Hash File Required >--" << endl;
         exit(1);
-    } else if(data.getAttackMode() == 0 && dictFile == "") {
+    } else if(data.getAttackMode() == 0 && dict_file_path == "") {
         cout << "--< Dictionary Required for Dictionary Attack >--" << endl;
         exit(1);
     } else if(threads > MAX_THREADS) {
@@ -243,11 +243,11 @@ int main(int argc, char** argv) {
     }
 
     cout << "\n\n> Loading Hash File..." << endl;
-    data.addHashes(readFile(hashFile));
+    data.addHashes(readFile(hash_file_path));
     cout << "> Hash File Loaded" << endl;
     if(data.getAttackMode() == 0) {
         cout << "> Loading Dictionary..." << endl;
-        data.addWords(readFile(dictFile));
+        data.addWords(readFile(dict_file_path));
         cout << "> Dictionary Loaded" << endl;
     }
 
@@ -278,8 +278,8 @@ int main(int argc, char** argv) {
     cout << "> Elapsed-Time.........: " << elapsed_seconds.count() << " sec" << endl;
     cout << "> Cracked..............: " << data.getCrackSize() << "/" << data.getHashSize() << endl;
 
-    if(outFile != "")
-        writeFile(outFile, data.getCracked());
+    if(out_file_path != "")
+        writeFile(out_file_path, data.getCracked());
 
     return 0;
 }
